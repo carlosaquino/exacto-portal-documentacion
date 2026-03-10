@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #0ea5e9;
+  --color-secondary: #1e293b;
+  --color-accent: #f59e0b;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-bg-dark: #0f172a;
+  --color-bg-darker: #0b1120;
+  --color-code-bg: #1e293b;
+  --color-sidebar-bg: #0f172a;
+  --color-sidebar-border: #1e293b;
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: linear-gradient(135deg, #0f172a 0%, #0b1a3b 25%, #111827 50%, #0f172a 75%, #0d1525 100%);
+  background-attachment: fixed;
+  color: #e2e8f0;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Subtle radial glow accent */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: 120%;
+  height: 60%;
+  background: radial-gradient(ellipse at center top, rgba(14, 165, 233, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(-50%);
+}
+
+/* Ensure content stays above the glow */
+main { position: relative; z-index: 1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-bg-darker); }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* Code blocks */
+pre code {
+  font-family: var(--font-mono), 'Fira Code', monospace;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+/* Swagger UI overrides */
+.swagger-wrapper .swagger-ui .topbar { display: none; }
+.swagger-wrapper .swagger-ui .scheme-container { display: none; }
+.swagger-wrapper .swagger-ui .servers-title,
+.swagger-wrapper .swagger-ui .servers { display: none; }
+.swagger-wrapper .swagger-ui .info a { display: none; }
+.swagger-wrapper .swagger-ui .opblock-post .opblock-summary-method { background: #3b82f6 !important; }
+.swagger-wrapper .swagger-ui .opblock-get .opblock-summary-method { background: #10b981 !important; }
+.swagger-wrapper .swagger-ui .opblock-delete .opblock-summary-method { background: #ef4444 !important; }
+.swagger-wrapper .swagger-ui .opblock-put .opblock-summary-method { background: #f59e0b !important; }
+.swagger-wrapper .swagger-ui { background: #1e293b; color: #e2e8f0; }
+.swagger-wrapper .swagger-ui .opblock { border-color: #334155; }
+.swagger-wrapper .swagger-ui .opblock .opblock-summary { border-color: #334155; }
+.swagger-wrapper .swagger-ui .info .title { color: #f1f5f9; }
+.swagger-wrapper .swagger-ui .info p,
+.swagger-wrapper .swagger-ui .info li { color: #94a3b8; }
+.swagger-wrapper .swagger-ui .btn { color: #e2e8f0; border-color: #475569; }
+.swagger-wrapper .swagger-ui select { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+.swagger-wrapper .swagger-ui input[type=text] { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+.swagger-wrapper .swagger-ui textarea { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+.swagger-wrapper .swagger-ui .model-box { background: #0f172a; }
+.swagger-wrapper .swagger-ui .opblock-body pre.microlight { background: #0f172a !important; color: #e2e8f0 !important; }
+.swagger-wrapper .swagger-ui table thead tr td, .swagger-wrapper .swagger-ui table thead tr th { color: #94a3b8; border-color: #334155; }
+.swagger-wrapper .swagger-ui .response-col_status { color: #e2e8f0; }
+.swagger-wrapper .swagger-ui .response-col_description { color: #94a3b8; }
+.swagger-wrapper .swagger-ui .filter input[type=text] { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+.swagger-wrapper .swagger-ui .opblock-tag { color: #f1f5f9; border-color: #334155; }
+.swagger-wrapper .swagger-ui .opblock-tag:hover { background: rgba(14,165,233,0.05); }
+
+/* Mermaid diagram dark theme */
+.mermaid-container svg { max-width: 100%; height: auto; }

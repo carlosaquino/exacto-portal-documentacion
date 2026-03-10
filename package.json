@@ -1,0 +1,35 @@
+{
+  "name": "exacto-api-docs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "dev:webpack": "next dev --experimental-https=false",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "fuse.js": "^7.1.0",
+    "lucide-react": "^0.577.0",
+    "mermaid": "^11.13.0",
+    "next": "16.1.6",
+    "prismjs": "^1.30.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "swagger-ui-react": "^5.32.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/prismjs": "^1.26.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^5.18.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
