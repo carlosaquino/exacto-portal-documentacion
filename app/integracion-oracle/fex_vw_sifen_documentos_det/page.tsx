@@ -1,4 +1,5 @@
 import CodeBlock from '@/components/CodeBlock';
+import FieldTable from '@/components/FieldTable';
 import Link from 'next/link';
 
 export default function FexVwSifenDocumentosDetPage() {
@@ -16,36 +17,31 @@ export default function FexVwSifenDocumentosDetPage() {
         Incluye desglose de IVA por item (10%, 5%, exentas).
       </p>
 
-      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Script SQL</h2>
-      <CodeBlock
-        language="sql"
-        code={`create or replace force view fex_vw_sifen_documentos_det as
-select det.idfacturadet as clave_movimiento
-,      det.idarticulo   as codigo_producto
-,      det.cantidad,    nvl(det.idunimed, 77) as unidad_medida
-,      upper(trim(det.descripcion)) as descripcion
-,      round(det.preciounitario, 0) as precio_unitario
-,      round(det.preciounitario * det.cantidad, 0) as total_bruto_item
-,      case when det.valordescuento>0 and det.preciounitario>0 and det.cantidad>0
-            then round((det.valordescuento/(det.preciounitario*det.cantidad))*100, 2)
-            else 0 end  as porcentaje_descuento
-,      case when det.valordescuento>0 and det.cantidad>0
-            then round(det.valordescuento/det.cantidad, 0) else 0 end as descuento_unitario
-,      round(nvl(det.valordescuento,0), 0) as monto_total_descuento
-,      case when nvl(det.porcentaje,0)>0 then 1 else 3 end as afecta_iva
-,      nvl(det.porcentaje,0)              as tasa_impuesto
-,      round(case when det.porcentaje=10 then det.montogravada else 0 end, 0) as gravadas_10
-,      round(case when det.porcentaje=10 then det.iva          else 0 end, 0) as iva_10
-,      round(case when det.porcentaje=5  then det.montogravada else 0 end, 0) as gravadas_5
-,      round(case when det.porcentaje=5  then det.iva          else 0 end, 0) as iva_5
-,      round(case when nvl(det.porcentaje,0)=0
-                  then det.preciounitario*det.cantidad - nvl(det.valordescuento,0)
-                  else 0 end, 0)         as exentas
-,      round(det.preciounitario*det.cantidad - nvl(det.valordescuento,0), 0) as total_neto
-,      pe.id as codigo_empresa
-from   fc_factur_sifen_det_ts    det
-inner join fex_vw_sifen_documentos doc on doc.clave_movimiento = det.idfacturadet
-inner join fc_param_empresa        pe  on pe.id = doc.codigo_empresa;`}
+      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Columnas</h2>
+
+      <FieldTable
+        title="Columnas de la vista"
+        fields={[
+          { name: 'clave_movimiento', type: 'number', required: true, description: 'Clave del documento padre (FK a fex_vw_sifen_documentos)' },
+          { name: 'codigo_producto', type: 'string', required: true, description: 'Codigo del articulo/producto' },
+          { name: 'cantidad', type: 'number', required: true, description: 'Cantidad del item' },
+          { name: 'unidad_medida', type: 'number', required: true, description: 'Codigo de unidad de medida (ej: 77 = Unidad)' },
+          { name: 'descripcion', type: 'string', required: true, description: 'Descripcion del producto/servicio' },
+          { name: 'precio_unitario', type: 'number', required: true, description: 'Precio unitario del item' },
+          { name: 'total_bruto_item', type: 'number', required: true, description: 'Total bruto (precio_unitario * cantidad)' },
+          { name: 'porcentaje_descuento', type: 'number', required: false, description: 'Porcentaje de descuento aplicado' },
+          { name: 'descuento_unitario', type: 'number', required: false, description: 'Monto de descuento por unidad' },
+          { name: 'monto_total_descuento', type: 'number', required: false, description: 'Monto total de descuento del item' },
+          { name: 'afecta_iva', type: 'number', required: true, description: '1 = Gravado, 3 = Exento' },
+          { name: 'tasa_impuesto', type: 'number', required: true, description: 'Tasa de IVA: 10, 5 o 0' },
+          { name: 'gravadas_10', type: 'number', required: true, description: 'Monto gravado al 10% del item' },
+          { name: 'iva_10', type: 'number', required: true, description: 'IVA 10% del item' },
+          { name: 'gravadas_5', type: 'number', required: true, description: 'Monto gravado al 5% del item' },
+          { name: 'iva_5', type: 'number', required: true, description: 'IVA 5% del item' },
+          { name: 'exentas', type: 'number', required: true, description: 'Monto exento del item' },
+          { name: 'total_neto', type: 'number', required: true, description: 'Total neto del item (bruto - descuento)' },
+          { name: 'codigo_empresa', type: 'number', required: true, description: 'Identificador de la empresa emisora' },
+        ]}
       />
 
       <h2 className="text-xl font-semibold text-white mt-8 mb-4">Query de Ejemplo</h2>

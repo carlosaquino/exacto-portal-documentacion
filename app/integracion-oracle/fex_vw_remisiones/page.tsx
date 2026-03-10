@@ -1,4 +1,5 @@
 import CodeBlock from '@/components/CodeBlock';
+import FieldTable from '@/components/FieldTable';
 import Link from 'next/link';
 
 export default function FexVwRemisionesPage() {
@@ -16,40 +17,33 @@ export default function FexVwRemisionesPage() {
         Solo aplica para Notas de Remision Electronica (tipo 7).
       </p>
 
-      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Script SQL</h2>
-      <CodeBlock
-        language="sql"
-        code={`create or replace force view fex_vw_remisiones as
-select doc.clave_movimiento
-,      nre.nre_motivo_emision as motivo_emision
-,      nre.nre_responsable_emision as responsable_emision
-,      nre.nre_km_estimados as km_estimado
-,      to_char(nre.nre_fecha_emision, 'YYYY-MM-DD') as fecha_emision_fac
-,      nre.nre_tipo_transporte, nre.nre_modalidad_transporte
--- Origen / Destino
-,      nre.nre_partida_direccion  as direccion_salida
-,      nre.nre_partida_ciudad     as ciudad_salida
-,      nre.nre_llegada_direccion  as direccion_entrega
-,      nre.nre_llegada_ciudad     as ciudad_entrega
--- Vehiculo
-,      veh.vehi_tipo_del_vehiculo as tipo_vehiculo
-,      mar.mve_descripcion        as marca_vehiculo
-,      veh.vehi_matricula         as nro_chapa
--- Transportista
-,      case tra.trans_naturaleza when '1' then 1 when '2' then 2 else null end
-       as naturaleza_transportista
-,      tra.trans_desc as nombre_transportista, tra.trans_ruc as ruc_transportista
-,      tra.trans_direccion as domicilio_fiscal
--- Conductor
-,      con.cond_nro_documento as nro_documento_chofer
-,      con.cond_nombre_apellido as nombre_chofer
-,      doc.codigo_empresa
-from   fex_vw_sifen_documentos doc
-inner join nre_cabecera  nre on nre.nre_codigo    = doc.clave_movimiento
-left  join repa_vehiculo veh on veh.vehi_codigo   = nre.nre_cod_vehiculo
-left  join stk_marca_vehiculo mar on mar.mve_codigo = veh.codigo_marca
-left  join repa_transportista tra on tra.trans_codigo = nre.nre_cod_transportista
-left  join nre_conductores    con on con.cond_codigo  = nre.nre_cod_conductor;`}
+      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Columnas</h2>
+
+      <FieldTable
+        title="Columnas de la vista"
+        fields={[
+          { name: 'clave_movimiento', type: 'number', required: true, description: 'Clave del documento de remision' },
+          { name: 'motivo_emision', type: 'string', required: true, description: 'Motivo de emision de la nota de remision' },
+          { name: 'responsable_emision', type: 'string', required: true, description: 'Responsable de la emision' },
+          { name: 'km_estimado', type: 'number', required: false, description: 'Kilometros estimados del recorrido' },
+          { name: 'fecha_emision_fac', type: 'string', required: true, description: 'Fecha de emision (formato YYYY-MM-DD)' },
+          { name: 'nre_tipo_transporte', type: 'string', required: true, description: 'Tipo de transporte' },
+          { name: 'nre_modalidad_transporte', type: 'string', required: true, description: 'Modalidad de transporte' },
+          { name: 'direccion_salida', type: 'string', required: true, description: 'Direccion del punto de partida' },
+          { name: 'ciudad_salida', type: 'string', required: true, description: 'Ciudad del punto de partida' },
+          { name: 'direccion_entrega', type: 'string', required: true, description: 'Direccion del punto de llegada' },
+          { name: 'ciudad_entrega', type: 'string', required: true, description: 'Ciudad del punto de llegada' },
+          { name: 'tipo_vehiculo', type: 'string', required: false, description: 'Tipo del vehiculo de transporte' },
+          { name: 'marca_vehiculo', type: 'string', required: false, description: 'Marca del vehiculo' },
+          { name: 'nro_chapa', type: 'string', required: false, description: 'Numero de chapa/matricula del vehiculo' },
+          { name: 'naturaleza_transportista', type: 'number', required: false, description: '1 = Persona Fisica, 2 = Persona Juridica' },
+          { name: 'nombre_transportista', type: 'string', required: false, description: 'Nombre o razon social del transportista' },
+          { name: 'ruc_transportista', type: 'string', required: false, description: 'RUC del transportista' },
+          { name: 'domicilio_fiscal', type: 'string', required: false, description: 'Domicilio fiscal del transportista' },
+          { name: 'nro_documento_chofer', type: 'string', required: false, description: 'Numero de documento del conductor' },
+          { name: 'nombre_chofer', type: 'string', required: false, description: 'Nombre y apellido del conductor' },
+          { name: 'codigo_empresa', type: 'number', required: true, description: 'Identificador de la empresa emisora' },
+        ]}
       />
 
       <h2 className="text-xl font-semibold text-white mt-8 mb-4">Query de Ejemplo</h2>

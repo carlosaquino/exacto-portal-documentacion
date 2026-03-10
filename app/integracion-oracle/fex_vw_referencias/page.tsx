@@ -1,4 +1,5 @@
 import CodeBlock from '@/components/CodeBlock';
+import FieldTable from '@/components/FieldTable';
 import Link from 'next/link';
 
 export default function FexVwReferenciasPage() {
@@ -16,21 +17,21 @@ export default function FexVwReferenciasPage() {
         Utilizada para Notas de Credito (tipo 5) y Notas de Debito (tipo 6) que referencian a un documento original.
       </p>
 
-      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Script SQL</h2>
-      <CodeBlock
-        language="sql"
-        code={`create or replace force view fex_vw_referencias as
-select cab.idfacturacab as clave_movimiento
-,      cab.cdcref as cdc_ref, cab.timbradoref as timbrado_doc_impr
-,      to_char(cab.establecimientoref) as establec_doc_impr
-,      to_char(cab.puntoexpedicionref) as pto_exp_doc_impr
-,      to_char(cab.nrofacturaref)      as nro_comp_doc_impr
-,      to_char(cab.fechaemisionref, 'YYYY-MM-DD') as fecha_documento
-,      cab.tipdocaso as tipo_doc_asociado
-,      doc.codigo_empresa
-from   fc_factur_sifen_cab_ts      cab
-inner join fex_vw_sifen_documentos doc on doc.clave_movimiento = cab.idfacturacab
-where  cab.cdcref is not null or cab.clavefacturef is not null;`}
+      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Columnas</h2>
+
+      <FieldTable
+        title="Columnas de la vista"
+        fields={[
+          { name: 'clave_movimiento', type: 'number', required: true, description: 'Clave del documento que hace la referencia' },
+          { name: 'cdc_ref', type: 'string', required: false, description: 'CDC del documento electronico referenciado (44 caracteres)' },
+          { name: 'timbrado_doc_impr', type: 'string', required: false, description: 'Timbrado del documento impreso referenciado' },
+          { name: 'establec_doc_impr', type: 'string', required: false, description: 'Establecimiento del documento impreso referenciado' },
+          { name: 'pto_exp_doc_impr', type: 'string', required: false, description: 'Punto de expedicion del documento impreso referenciado' },
+          { name: 'nro_comp_doc_impr', type: 'string', required: false, description: 'Numero de comprobante del documento impreso referenciado' },
+          { name: 'fecha_documento', type: 'string', required: false, description: 'Fecha del documento referenciado (formato YYYY-MM-DD)' },
+          { name: 'tipo_doc_asociado', type: 'string', required: false, description: 'Tipo del documento asociado' },
+          { name: 'codigo_empresa', type: 'number', required: true, description: 'Identificador de la empresa emisora' },
+        ]}
       />
 
       <h2 className="text-xl font-semibold text-white mt-8 mb-4">Query de Ejemplo</h2>

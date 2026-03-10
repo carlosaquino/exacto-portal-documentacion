@@ -1,4 +1,5 @@
 import CodeBlock from '@/components/CodeBlock';
+import FieldTable from '@/components/FieldTable';
 import Link from 'next/link';
 
 export default function FexVwCobrosPage() {
@@ -16,25 +17,25 @@ export default function FexVwCobrosPage() {
         Incluye tanto pagos registrados (credito) como cobro inmediato (contado).
       </p>
 
-      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Script SQL</h2>
-      <CodeBlock
-        language="sql"
-        code={`create or replace force view fex_vw_cobros as
--- Pagos registrados (credito)
-select pag.pag_clave_doc as clave_movimiento
-,      1 as tipo, round(pag.pag_imp_loc,0) as monto, 'PYG' as moneda, 1 as cotizacion_moneda
-,      null as codigo_tarjeta, null as procesadora, null as codigo_autorizacion
-,      null as titular, null as nro_tarjeta, null as nro_cheque, null as banco_emisor
-,      doc.codigo_empresa
-from   fin_pago pag
-inner join fex_vw_sifen_documentos doc on doc.clave_movimiento = pag.pag_clave_doc
-where  doc.condicion = 2
-union all
--- Ventas contado (cobro inmediato por el total)
-select doc.clave_movimiento, 1, doc.total_neto_operacion, doc.moneda, doc.cotizacion_moneda
-,      null, null, null, null, null, null, null, doc.codigo_empresa
-from   fex_vw_sifen_documentos doc
-where  doc.condicion = 1;`}
+      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Columnas</h2>
+
+      <FieldTable
+        title="Columnas de la vista"
+        fields={[
+          { name: 'clave_movimiento', type: 'number', required: true, description: 'Clave del documento padre (FK a fex_vw_sifen_documentos)' },
+          { name: 'tipo', type: 'number', required: true, description: 'Tipo de pago (1=Efectivo, 2=Cheque, 3=Tarjeta credito, 4=Tarjeta debito, etc.)' },
+          { name: 'monto', type: 'number', required: true, description: 'Monto del pago' },
+          { name: 'moneda', type: 'string', required: true, description: 'Moneda del pago (ej: "PYG", "USD")' },
+          { name: 'cotizacion_moneda', type: 'number', required: true, description: 'Cotizacion de la moneda (1 para PYG)' },
+          { name: 'codigo_tarjeta', type: 'string', required: false, description: 'Codigo de la tarjeta (si aplica)' },
+          { name: 'procesadora', type: 'string', required: false, description: 'Procesadora de la tarjeta (si aplica)' },
+          { name: 'codigo_autorizacion', type: 'string', required: false, description: 'Codigo de autorizacion del pago con tarjeta' },
+          { name: 'titular', type: 'string', required: false, description: 'Nombre del titular de la tarjeta' },
+          { name: 'nro_tarjeta', type: 'string', required: false, description: 'Ultimos digitos de la tarjeta' },
+          { name: 'nro_cheque', type: 'string', required: false, description: 'Numero de cheque (si aplica)' },
+          { name: 'banco_emisor', type: 'string', required: false, description: 'Banco emisor del cheque (si aplica)' },
+          { name: 'codigo_empresa', type: 'number', required: true, description: 'Identificador de la empresa emisora' },
+        ]}
       />
 
       <h2 className="text-xl font-semibold text-white mt-8 mb-4">Query de Ejemplo</h2>

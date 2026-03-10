@@ -1,4 +1,5 @@
 import CodeBlock from '@/components/CodeBlock';
+import FieldTable from '@/components/FieldTable';
 import Link from 'next/link';
 
 export default function FexVwCuotasPage() {
@@ -16,19 +17,17 @@ export default function FexVwCuotasPage() {
         Solo aplica para documentos con <code className="text-amber-400">condicion = 2</code> (credito).
       </p>
 
-      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Script SQL</h2>
-      <CodeBlock
-        language="sql"
-        code={`create or replace force view fex_vw_cuotas as
-select cuo.cuo_clave_doc as clave_movimiento
-,      row_number() over (partition by cuo.cuo_clave_doc order by cuo.cuo_fec_vto) as nro_cuota
-,      round(cuo.cuo_imp_loc,0) as monto_cuota
-,      to_char(cuo.cuo_fec_vto, 'YYYY-MM-DD') as vencimiento_cuota
-,      doc.codigo_empresa
-from   fin_cuota cuo
-inner join fex_vw_sifen_documentos doc on doc.clave_movimiento = cuo.cuo_clave_doc
-where  doc.condicion = 2
-and    nvl(cuo.cuo_imp_loc,0) > 0;`}
+      <h2 className="text-xl font-semibold text-white mt-8 mb-4">Columnas</h2>
+
+      <FieldTable
+        title="Columnas de la vista"
+        fields={[
+          { name: 'clave_movimiento', type: 'number', required: true, description: 'Clave del documento padre (FK a fex_vw_sifen_documentos)' },
+          { name: 'nro_cuota', type: 'number', required: true, description: 'Numero secuencial de la cuota' },
+          { name: 'monto_cuota', type: 'number', required: true, description: 'Monto de la cuota en moneda local' },
+          { name: 'vencimiento_cuota', type: 'string', required: true, description: 'Fecha de vencimiento de la cuota (formato YYYY-MM-DD)' },
+          { name: 'codigo_empresa', type: 'number', required: true, description: 'Identificador de la empresa emisora' },
+        ]}
       />
 
       <h2 className="text-xl font-semibold text-white mt-8 mb-4">Query de Ejemplo</h2>
