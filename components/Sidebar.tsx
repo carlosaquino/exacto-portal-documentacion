@@ -18,8 +18,11 @@ import {
   History,
   List,
   Search,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { useSidebar } from './SidebarContext';
 
 interface NavItem {
   label: string;
@@ -87,13 +90,47 @@ const navigation: NavItem[] = [
   { label: 'Changelog', href: '/changelog', icon: <History size={18} /> },
 ];
 
-function NavSection({ item }: { item: NavItem }) {
+function NavSection({ item, collapsed }: { item: NavItem; collapsed: boolean }) {
   const pathname = usePathname();
   const isActive = item.href === pathname;
   const hasActiveChild = item.children?.some((c) => c.href === pathname);
   const [open, setOpen] = useState(hasActiveChild ?? false);
 
   if (item.children) {
+    if (collapsed) {
+      return (
+        <div className="relative group">
+          <div
+            className={clsx(
+              'flex items-center justify-center p-2 rounded-lg transition-colors cursor-pointer',
+              hasActiveChild
+                ? 'text-sky-400 bg-sky-950/40'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+            )}
+          >
+            {item.icon}
+          </div>
+          <div className="absolute left-full top-0 ml-2 hidden group-hover:block z-50 bg-slate-800 border border-slate-700 rounded-lg py-2 px-1 min-w-48 shadow-xl">
+            <p className="px-3 py-1 text-xs font-semibold text-slate-300 mb-1">{item.label}</p>
+            {item.children.map((child) => (
+              <Link
+                key={child.href}
+                href={child.href!}
+                className={clsx(
+                  'block px-3 py-1.5 text-sm rounded-md transition-colors',
+                  child.href === pathname
+                    ? 'text-sky-400 bg-sky-950/40 font-medium'
+                    : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
+                )}
+              >
+                {child.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div>
         <button
@@ -131,6 +168,27 @@ function NavSection({ item }: { item: NavItem }) {
     );
   }
 
+  if (collapsed) {
+    return (
+      <div className="relative group">
+        <Link
+          href={item.href!}
+          className={clsx(
+            'flex items-center justify-center p-2 rounded-lg transition-colors',
+            isActive
+              ? 'text-sky-400 bg-sky-950/40 font-medium'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+          )}
+        >
+          {item.icon}
+        </Link>
+        <div className="absolute left-full top-0 ml-2 hidden group-hover:block z-50 bg-slate-800 border border-slate-700 rounded-lg py-1.5 px-3 whitespace-nowrap shadow-xl">
+          <span className="text-sm text-slate-300">{item.label}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Link
       href={item.href!}
@@ -148,7 +206,7 @@ function NavSection({ item }: { item: NavItem }) {
 }
 
 export default function Sidebar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { collapsed, setCollapsed, mobileOpen, setMobileOpen } = useSidebar();
 
   return (
     <>
@@ -173,30 +231,56 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         className={clsx(
-          'fixed top-0 left-0 z-40 h-screen w-72 bg-[var(--color-sidebar-bg)] border-r border-[var(--color-sidebar-border)] overflow-y-auto transition-transform lg:translate-x-0',
+          'fixed top-0 left-0 z-40 h-screen bg-[var(--color-sidebar-bg)] border-r border-[var(--color-sidebar-border)] flex flex-col transition-all duration-300 lg:translate-x-0',
+          collapsed ? 'w-16' : 'w-72',
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Logo */}
-        <div className="p-5 border-b border-slate-800 flex flex-col items-center">
+        <div className={clsx(
+          'border-b border-slate-800 flex flex-col items-center shrink-0',
+          collapsed ? 'p-3' : 'p-5'
+        )}>
           <Link href="/" className="flex items-center justify-center">
-            <Image src="/logo_exacto.png" alt="EXACTO" width={160} height={40} className="h-10 w-auto" />
+            {collapsed ? (
+              <Image src="/logo_exacto.png" alt="EXACTO" width={40} height={40} className="h-8 w-auto" />
+            ) : (
+              <Image src="/logo_exacto.png" alt="EXACTO" width={160} height={40} className="h-10 w-auto" />
+            )}
           </Link>
-          <p className="text-xs text-slate-500 mt-2 text-center">Portal de Documentacion API v2.0.1</p>
+          {!collapsed && (
+            <p className="text-xs text-slate-500 mt-2 text-center">Portal de Documentacion API v2.0.1</p>
+          )}
         </div>
 
+        {/* Toggle button */}
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex items-center justify-center p-2 mx-2 mt-2 text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 rounded-lg transition-colors shrink-0"
+          title={collapsed ? 'Expandir menu' : 'Colapsar menu'}
+        >
+          {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+        </button>
+
         {/* Navigation */}
-        <nav className="p-3 space-y-1">
+        <nav className={clsx('flex-1 overflow-y-auto space-y-1', collapsed ? 'p-2' : 'p-3')}>
           {navigation.map((item) => (
-            <NavSection key={item.label} item={item} />
+            <NavSection key={item.label} item={item} collapsed={collapsed} />
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800 bg-[var(--color-sidebar-bg)]">
-          <p className="text-xs text-slate-600 text-center">
-            Desarrollado por IPYAHU
-          </p>
+        {/* Footer con logo IPYAHU */}
+        <div className="shrink-0 border-t border-slate-800 bg-[var(--color-sidebar-bg)] p-3 flex flex-col items-center gap-1">
+          <Image
+            src="/logo_ipyahu.png"
+            alt="IPYAHU"
+            width={collapsed ? 32 : 80}
+            height={collapsed ? 32 : 30}
+            className={clsx(collapsed ? 'h-6 w-auto' : 'h-7 w-auto')}
+          />
+          {!collapsed && (
+            <p className="text-[10px] text-slate-600 text-center">Desarrollado por IPYAHU</p>
+          )}
         </div>
       </aside>
     </>
