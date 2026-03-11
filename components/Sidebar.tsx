@@ -241,12 +241,14 @@ export default function Sidebar() {
           'border-b border-slate-800 flex flex-col items-center shrink-0',
           collapsed ? 'p-3' : 'p-5'
         )}>
-          <Link href="/" className="flex items-center justify-center">
-            {collapsed ? (
-              <Image src="/logo_exacto.png" alt="EXACTO" width={40} height={40} className="h-8 w-auto" />
-            ) : (
-              <Image src="/logo_exacto.png" alt="EXACTO" width={160} height={40} className="h-10 w-auto" />
-            )}
+          <Link href="/" className="flex items-center justify-center overflow-hidden">
+            <Image
+              src="/logo_exacto.png"
+              alt="EXACTO"
+              width={160}
+              height={40}
+              className={clsx('w-auto object-contain transition-all duration-300', collapsed ? 'max-h-7 max-w-[2.5rem]' : 'max-h-10')}
+            />
           </Link>
           {!collapsed && (
             <p className="text-xs text-slate-500 mt-2 text-center">Portal de Documentacion API v2.0.1</p>
@@ -274,9 +276,9 @@ export default function Sidebar() {
           <Image
             src="/logo_ipyahu.png"
             alt="IPYAHU"
-            width={collapsed ? 32 : 80}
-            height={collapsed ? 32 : 30}
-            className={clsx(collapsed ? 'h-6 w-auto' : 'h-7 w-auto')}
+            width={80}
+            height={30}
+            className={clsx('w-auto object-contain transition-all duration-300', collapsed ? 'max-h-5 max-w-[2.5rem]' : 'max-h-7')}
           />
           {!collapsed && (
             <p className="text-[10px] text-slate-600 text-center">Desarrollado por IPYAHU</p>
